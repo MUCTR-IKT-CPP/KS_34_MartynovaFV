@@ -1,8 +1,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-int countEven(int *array, int const N);
-int sumDivisible(int *array, int const N, int divider);
+int countEven(int* array, int const N);
+int sumDivisible(int* array, int const N, int divider);
 
 int main(){
 
@@ -35,7 +35,7 @@ int main(){
  * @param N количество элементов в массиве.
  * @return количество чётных чисел.
  */
-int countEven(int *array, int const N){
+int countEven(int* array, int const N){
     int count = 0;
     for(int i = 0; i < N; i++){
         if(array[i] % 2 == 0){
@@ -52,7 +52,7 @@ int countEven(int *array, int const N){
  * @param divider делитель.
  * @return сумма чисел, делящихся на делитель без остатка.
  */
-int sumDivisible(int *array, int const N, int divider){
+int sumDivisible(int* array, int const N, int divider){
     int summa = 0;
     for(int i = 0; i < N; i++){
         if(array[i] % divider == 0){
