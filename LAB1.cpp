@@ -1,13 +1,13 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-int countEven(int *array, const int N);
+int countEven(int *array, int const N);
 int sumDivisible(int *array, int const N, int divider);
 
 int main(){
 
     srand(time(0));
-    const int N = 20;
+    int const N = 20;
     int array[N];
     int even_count = 0;
     int summ_divided_three = 0;
@@ -23,7 +23,6 @@ int main(){
     summ_divided_three = sumDivisible(array, N, 3);
     summ_divided_five = sumDivisible(array, N, 5);
         
-    
     std::cout << "Summa chisel kratnyh 3: " << summ_divided_three << std::endl;
     std::cout << "Summa chisel kratnyh 5: " << summ_divided_five << std::endl;
     return 0;
@@ -36,7 +35,7 @@ int main(){
  * @param N количество элементов в массиве.
  * @return количество чётных чисел.
  */
-int countEven(int *array, const int N){
+int countEven(int *array, int const N){
     int count = 0;
     for(int i = 0; i < N; i++){
         if(array[i] % 2 == 0){
