@@ -129,17 +129,22 @@ void findMaxAndMin(int &max_element, int &min_element, int* parray, int N){
  */
 double findMedian(int* parray, int N){
   double median;
-  std::sort(parray, parray + N);
+  int* copy = new int[N];
+  for(int i = 0; i < N; i++){
+    copy[i] = parray[i];
+  }
+  std::sort(copy, copy + N);
   std::cout << "Sorted array: ";
   for(int i = 0; i < N; i++){
-    std::cout << parray[i] << ", ";
+    std::cout << copy[i] << ", ";
   }
   std::cout << std::endl;
   if(N % 2 == 0){
-    median = (parray[N/2] + parray[N/2 - 1]) / 2.0;
+    median = (copy[N/2] + copy[N/2 - 1]) / 2.0;
   }else{
-    median = parray[N/2];
+    median = copy[N/2];
   }
+  delete[] copy;
   return median;
 }
 
