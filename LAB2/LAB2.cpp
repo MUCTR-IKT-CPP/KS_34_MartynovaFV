@@ -5,7 +5,7 @@
 const int SIZE = 5;
 
 void inputNum(int &N);
-int* allocateArray(int &N);
+int* allocateArray(int N);
 void generateRandom(int* parray, int lower_limit, int upper_limit, int N);
 void findMaxAndMin(int &max_element, int &min_element, int* parray, int N);
 double findMedian(int* parray, int N);
@@ -77,7 +77,7 @@ void inputNum(int &N){
  * @param N количество элементов массива.
  * @return указатель на первый элемент созданного массива.
  */
-int* allocateArray(int &N){
+int* allocateArray(int N){
     int* array = new int[N];
    return array;
 }
