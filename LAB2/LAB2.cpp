@@ -6,7 +6,9 @@ const int SIZE = 5;
 
 void inputNum(int &N);
 int* allocateArray(int N);
+void howToFillOut(int* parray, int N);
 void generateRandom(int* parray, int lower_limit, int upper_limit, int N);
+
 void findMaxAndMin(int &max_element, int &min_element, int* parray, int N);
 double findMedian(int* parray, int N);
 double calculateAverage(int* parray, int N);
@@ -19,16 +21,22 @@ void showDifferenceInTwoWays(int (&test_array)[SIZE]);
 int main(){
   srand(time(0)); 
   int N;
+  int choice = 0;
+  int fill_choice = 0;
   int test_array[SIZE] {23, 56, 12, -5, -103};
   int max_element;
   int min_element;
-  
   const double COEFFICIENT = 1.25;
-    inputNum(N); 
+  inputNum(N); 
   int* parray = allocateArray(N); 
-    generateRandom(parray, 20, 20000, N);
+  std::cout << "How to fill the array? 1-manually, 2-randomly" << std::endl;
+  std::cin >> fill_choice;
+  if(fill_choice == 1){
+      howToFillOut(parray, N);
+  }else if(fill_choice == 2){
+      generateRandom(parray, 20, 20000, N);
+  }
   
-  int choice = 0;
   while(choice != -1){
     std::cout << "Show menu: \n" << std::endl;
     std::cout << " '1' - Max and min frequency\n" 
@@ -67,7 +75,7 @@ int main(){
  * @param N ссылка на переменную, в которую будет записано введённое число.
  */
 void inputNum(int &N){
-  std::cout << "Enter the number of array elements: " << std::endl;
+  std::cout << "Enter the number of array elements: ";
     std::cin >> N;
 }
 
@@ -80,6 +88,19 @@ void inputNum(int &N){
 int* allocateArray(int N){
     int* array = new int[N];
    return array;
+}
+
+/*
+ * Заполняет массив числами, введёнными пользователем вручную.
+ *
+ * @param parray указатель на массив.
+ * @param N количество элементов массива.
+ */
+void howToFillOut(int* parray, int N){
+    std::cout << "Enter N numbers: ";
+    for(int i = 0; i < N; i++){
+        std::cin >> parray[i];
+    }
 }
 
 /*
