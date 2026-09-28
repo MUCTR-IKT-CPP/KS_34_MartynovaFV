@@ -25,7 +25,7 @@ struct SmartDevice;
 SmartDevice* arraySmartDevice(int N);
 void fillSmartDevice(int N, SmartDevice* devices);
 void printAllDevices(int N, SmartDevice* devices);
-void statusСheck(int N, SmartDevice* devices);
+void statusCheck(int N, SmartDevice* devices);
 int* countingTypes(int N, SmartDevice* devices);
 bool comparisonTypeAndName(const SmartDevice& a, const SmartDevice& b);
 void searchType(int N, SmartDevice* devices);
@@ -52,7 +52,7 @@ int main(){
         << std::endl;
     std::cin >> choice ;
     if(choice == 1){
-		statusСheck(N, array_smart_device);
+		statusCheck(N, array_smart_device);
     }else if(choice == 2){
 		searchType(N, array_smart_device);
     }else if(choice == 3){
@@ -147,7 +147,7 @@ void printAllDevices(int N, SmartDevice* devices){
  * @param N количество элементов массива.
  * @param devices указатель на массив устройств.
  */
-void statusСheck(int N, SmartDevice* devices){
+void statusCheck(int N, SmartDevice* devices){
 	for(int i = 0; i < N; i++){
 		if(devices[i].is_online == 0){
 			std::cout << devices[i].name << std::endl;
