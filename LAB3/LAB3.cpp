@@ -10,7 +10,7 @@ enum DeviceType{
 		Thermostat,
 		Camera, 
 		Speaker,
-		Sensor, 
+		Sensor
     };
 struct SmartDevice{
     int device_id; 
@@ -123,7 +123,7 @@ void fillSmartDevice(int N, SmartDevice* devices){
 			devices[i].is_online = (rand() % 2 == 1);
 			devices[i].last_active = rand() % 60 + 1;
 		} 
-	}
+}
 
 /**
  * Выводит все устройства массива на экран.
@@ -132,10 +132,11 @@ void fillSmartDevice(int N, SmartDevice* devices){
  * @param devices указатель на массив устройств.
  */
 void printAllDevices(int N, SmartDevice* devices){
+	std::string names[COUNTTYPES] = {"Light", "Thermostat", "Camera", "Speaker", "Sensor"};
 	for(int i = 0; i < N; i++){
 		std::cout << devices[i].device_id << ", " 
 				<< devices[i].name << ", "
-				<< devices[i].type << ", "
+				<< names[devices[i].type] << ", "
 				<< devices[i].is_online << ", "
 				<< devices[i].last_active << std::endl;
 	}
@@ -202,6 +203,7 @@ bool comparisonTypeAndName(const SmartDevice& a, const SmartDevice& b){
  * @param devices указатель на массив устройств.
  */
 void searchType(int N, SmartDevice* devices){
+	std::string names[COUNTTYPES] = {"Light", "Thermostat", "Camera", "Speaker", "Sensor"};
 	int* counters = countingTypes(N, devices);
 	SmartDevice* type_arrays[COUNTTYPES];
 	int indexes[COUNTTYPES] = {0};
@@ -222,7 +224,7 @@ void searchType(int N, SmartDevice* devices){
 	}
 	for(int i = 0; i < COUNTTYPES; i++){
 		for(int j = 0; j < indexes[i]; j++){
-			std::cout << type_arrays[i][j].type << " " << type_arrays[i][j].name << std::endl;
+			std::cout << names[type_arrays[i][j].type] << " " << type_arrays[i][j].name << std::endl;
 		}
 	}
 	for(int i = 0; i < COUNTTYPES; i++){
@@ -262,15 +264,16 @@ void systemStatistics(int N, SmartDevice* devices){
  * @param devices указатель на массив устройств.
  */
 void sorting(int N, SmartDevice* devices){
+	std::string names[COUNTTYPES] = {"Light", "Thermostat", "Camera", "Speaker", "Sensor"};
 	SmartDevice* copy = new SmartDevice[N];
-  for(int i = 0; i < N; i++){
-    copy[i] = devices[i];
+  	for(int i = 0; i < N; i++){
+    	copy[i] = devices[i];
   }
-  std::sort(copy, copy + N, comparisonTypeAndName);
-  for(int i = 0; i < N; i++){
-	  std::cout << copy[i].type << "-" << copy[i].name << "-" << copy[i].device_id << "-" << copy[i].is_online << "-" << copy[i].last_active << std::endl;
-  }
-  delete[] copy;
+  	std::sort(copy, copy + N, comparisonTypeAndName);
+  	for(int i = 0; i < N; i++){
+	  std::cout << names[copy[i].type] << "-" << copy[i].name << "-" << copy[i].device_id << "-" << copy[i].is_online << "-" << copy[i].last_active << std::endl;
+  	}
+  	delete[] copy;
   
 }
 
