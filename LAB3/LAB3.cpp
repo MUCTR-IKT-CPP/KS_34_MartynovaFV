@@ -197,6 +197,13 @@ bool comparisonTypeAndName(const SmartDevice& a, const SmartDevice& b){
 	return false;
 }
 
+/**
+ * Сравнивает два устройства по времени последней активности.
+ *
+ * @param a первое устройство.
+ * @param b второе устройство.
+ * @return true, если первое устройство должно идти раньше второго.
+ */
 bool comparisonByLastActive(const SmartDevice& a, const SmartDevice& b){
     return a.last_active > b.last_active; 
 }
