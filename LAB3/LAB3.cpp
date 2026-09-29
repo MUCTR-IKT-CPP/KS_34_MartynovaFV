@@ -21,7 +21,6 @@ struct SmartDevice{
 };
 
 void inputNum(int &N);
-struct SmartDevice;
 SmartDevice* arraySmartDevice(int N);
 void fillSmartDevice(int N, SmartDevice* devices);
 void printAllDevices(int N, SmartDevice* devices);
