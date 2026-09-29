@@ -197,6 +197,18 @@ bool comparisonTypeAndName(const SmartDevice& a, const SmartDevice& b){
 }
 
 /**
+ * Сравнивает два устройства по времени последней активности
+ * (от самых "старых" к самым "свежим").
+ *
+ * @param a первое устройство.
+ * @param b второе устройство.
+ * @return true, если первое устройство должно идти раньше второго.
+ */
+bool comparisonLastActive(const SmartDevice& a, const SmartDevice& b){
+	return a.last_active > b.last_active;
+}
+
+/**
  * Формирует массивы устройств по типам, сортирует их по времени
  * последней активности и выводит на экран.
  *
@@ -219,13 +231,19 @@ void searchType(int N, SmartDevice* devices){
 		type_arrays[t][indexes[t]] = devices[i];
 		indexes[t]++;
 	}
-	for(int i = 0; i < COUNTTYPES; i++){
-		std::sort(type_arrays[i], type_arrays[i] + indexes[i], comparisonTypeAndName);
-		
-	}
-	for(int i = 0; i < COUNTTYPES; i++){
-		for(int j = 0; j < indexes[i]; j++){
-			std::cout << names[type_arrays[i][j].type] << ":" << " " << type_arrays[i][j].name << std::endl;
+	
+	std::cout << "Choose type to search: 0 - Light, 1 - Thermostat, 2 - Camera, 3 - Speaker, 4 - Sensor" << std::endl;
+	int chosen_type = 0;
+	std::cin >> chosen_type;
+	
+	if(chosen_type < 0 || chosen_type >= COUNTTYPES){
+		std::cout << "Invalid type" << std::endl;
+	} else {
+		std::sort(type_arrays[chosen_type], type_arrays[chosen_type] + indexes[chosen_type], comparisonLastActive);
+		std::cout << names[chosen_type] << " devices (from old to fresh):" << std::endl;
+		for(int j = 0; j < indexes[chosen_type]; j++){
+			std::cout << names[type_arrays[chosen_type][j].type] << ": " << type_arrays[chosen_type][j].name 
+					<< " (last_active: " << type_arrays[chosen_type][j].last_active << ")" << std::endl;
 		}
 	}
 	for(int i = 0; i < COUNTTYPES; i++){
@@ -233,7 +251,6 @@ void searchType(int N, SmartDevice* devices){
 	}
 	delete[] counters;
 }
-
 /**
  * Выводит статистику системы: общее количество устройств,
  * количество онлайн-устройств и количество устройств каждого типа.
