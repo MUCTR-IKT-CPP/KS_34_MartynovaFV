@@ -27,6 +27,7 @@ void printAllDevices(int N, SmartDevice* devices);
 void statusCheck(int N, SmartDevice* devices);
 int* countingTypes(int N, SmartDevice* devices);
 bool comparisonTypeAndName(const SmartDevice& a, const SmartDevice& b);
+bool comparisonByLastActive(const SmartDevice& a, const SmartDevice& b);
 void searchType(int N, SmartDevice* devices);
 void systemStatistics(int N, SmartDevice* devices);
 void sorting(int N, SmartDevice* devices);
@@ -99,7 +100,7 @@ void fillSmartDevice(int N, SmartDevice* devices){
 	std::string type_prefix;
 	for(int i = 0; i < N; i++){
 		devices[i].device_id = i + 1;
-		devices[i].type = static_cast<DeviceType>(rand() % 5);
+		devices[i].type = static_cast<DeviceType>(rand() % COUNTTYPES);
 				switch(devices[i].type){
 					case Light:
 					type_prefix = "Light";
@@ -196,6 +197,10 @@ bool comparisonTypeAndName(const SmartDevice& a, const SmartDevice& b){
 	return false;
 }
 
+bool comparisonByLastActive(const SmartDevice& a, const SmartDevice& b){
+    return a.last_active > b.last_active; 
+}
+
 /**
  * Формирует массивы устройств по типам, сортирует их по времени
  * последней активности и выводит на экран.
@@ -204,34 +209,45 @@ bool comparisonTypeAndName(const SmartDevice& a, const SmartDevice& b){
  * @param devices указатель на массив устройств.
  */
 void searchType(int N, SmartDevice* devices){
-	std::string names[COUNTTYPES] = {"Light", "Thermostat", "Camera", "Speaker", "Sensor"};
-	int* counters = countingTypes(N, devices);
-	SmartDevice* type_arrays[COUNTTYPES];
-	int indexes[COUNTTYPES] = {0};
-	type_arrays[Light] = new SmartDevice[counters[Light]];
-	type_arrays[Thermostat] = new SmartDevice[counters[Thermostat]];
-	type_arrays[Camera] = new SmartDevice[counters[Camera]];
-	type_arrays[Speaker] = new SmartDevice[counters[Speaker]];
-	type_arrays[Sensor] = new SmartDevice[counters[Sensor]];
-	
-	for(int i = 0; i < N; i++){
-		int t = devices[i].type;
-		type_arrays[t][indexes[t]] = devices[i];
-		indexes[t]++;
-	}
-	for(int i = 0; i < COUNTTYPES; i++){
-		std::sort(type_arrays[i], type_arrays[i] + indexes[i], comparisonTypeAndName);
-		
-	}
-	for(int i = 0; i < COUNTTYPES; i++){
-		for(int j = 0; j < indexes[i]; j++){
-			std::cout << names[type_arrays[i][j].type] << ":" << " " << type_arrays[i][j].name << std::endl;
-		}
-	}
-	for(int i = 0; i < COUNTTYPES; i++){
-		delete[] type_arrays[i];
-	}
-	delete[] counters;
+    std::string names[COUNTTYPES] = {"Light", "Thermostat", "Camera", "Speaker", "Sensor"};
+    int* counters = countingTypes(N, devices);
+
+    int t;
+    std::cout << "Enter type (0-4): ";
+    std::cin >> t;
+    if(t < 0 || t >= COUNTTYPES){
+        std::cout << "Invalid type" << std::endl;
+        delete[] counters;
+        return;
+    }
+
+    SmartDevice* type_arrays[COUNTTYPES];
+    int indexes[COUNTTYPES] = {0};
+    type_arrays[Light]      = new SmartDevice[counters[Light]];
+    type_arrays[Thermostat] = new SmartDevice[counters[Thermostat]];
+    type_arrays[Camera]     = new SmartDevice[counters[Camera]];
+    type_arrays[Speaker]    = new SmartDevice[counters[Speaker]];
+    type_arrays[Sensor]     = new SmartDevice[counters[Sensor]];
+
+    for(int i = 0; i < N; i++){
+        int type_index = devices[i].type;              // ← переименовано
+        type_arrays[type_index][indexes[type_index]] = devices[i];
+        indexes[type_index]++;
+    }
+
+    for(int i = 0; i < COUNTTYPES; i++){
+        std::sort(type_arrays[i], type_arrays[i] + indexes[i], comparisonByLastActive);
+    }
+
+    for(int j = 0; j < indexes[t]; j++){
+        std::cout << names[type_arrays[t][j].type] << ": " << type_arrays[t][j].name
+                  << " (last_active: " << type_arrays[t][j].last_active << " min)" << std::endl;
+    }
+
+    for(int i = 0; i < COUNTTYPES; i++){
+        delete[] type_arrays[i];
+    }
+    delete[] counters;
 }
 
 /**
