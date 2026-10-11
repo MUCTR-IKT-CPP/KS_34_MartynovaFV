@@ -10,7 +10,7 @@ enum DeviceType{
 		Thermostat,
 		Camera, 
 		Speaker,
-		Sensor
+		Sensor,
     };
 struct SmartDevice{
     int device_id; 
@@ -238,7 +238,7 @@ void searchType(int N, SmartDevice* devices){
 	
 	if(chosen_type < 0 || chosen_type >= COUNTTYPES){
 		std::cout << "Invalid type" << std::endl;
-	} else {
+	}else{
 		std::sort(type_arrays[chosen_type], type_arrays[chosen_type] + indexes[chosen_type], comparisonLastActive);
 		std::cout << names[chosen_type] << " devices (from old to fresh):" << std::endl;
 		for(int j = 0; j < indexes[chosen_type]; j++){
