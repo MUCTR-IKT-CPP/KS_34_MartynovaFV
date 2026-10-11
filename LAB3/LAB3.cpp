@@ -10,7 +10,7 @@ enum DeviceType{
 		Thermostat,
 		Camera, 
 		Speaker,
-		Sensor,
+		Sensor
     };
 struct SmartDevice{
     int device_id; 
