@@ -31,7 +31,6 @@ class Plugin{
  * Создаёт пустой плагин: данные не выделены, тип AUDIO, не загружен.
  */
         Plugin() : plugin_data(nullptr), type(PluginType::AUDIO), is_loaded(false){
-            std::cout << "Initialization of plugin parameters" << std::endl;
         } 
 		
 /**
@@ -166,7 +165,7 @@ class PluginManager{
  *
  * @param n вместимость массива плагинов.
  */
-	    PluginManager(int n) : plugins(new Plugin[n]), size(n), count(n){
+	    PluginManager(int n) : plugins(new Plugin[n]), size(n), count(0){
             std::cout << "Parameterized constructor\n";
         } 
 
@@ -237,11 +236,12 @@ class PluginManager{
  * @param type тип загружаемого плагина.
  */
 		void pluginLoading(PluginType type){
+            std::string names[3] = {"AUDIO", "VIDEO", "IMAGE"};
             if (count < size){
                 plugins[count] = Plugin(type);
+                std::cout << "Type: " << "Plugin loaded: " << names[(int)type] << " at index " << count << std::endl;
                 count++;
             }
-            std::cout << "Type: " << (int)type << std::endl;
 		}
 		
 /**
@@ -249,9 +249,10 @@ class PluginManager{
  * Выводит информацию о каждом плагине в консоль.
  */
         void demonstrationOfWork(){
+            std::string names[3] = {"AUDIO", "VIDEO", "IMAGE"};
             if(count > 0){
                 for(int i = 0; i < count; i++){
-                    std::cout << "Plugin #" << i << " type: " << static_cast<int>(plugins[i].type) << ", loaded: " << plugins[i].is_loaded << "\n";
+                    std::cout << "Plugin #" << i << " type: " << names[static_cast<int>(plugins[i].type)] << ", loaded: " << plugins[i].is_loaded << "\n";
                 }
             }else{
                 std::cout << "No plugins loaded";
@@ -264,15 +265,18 @@ class PluginManager{
  * @param type тип выгружаемого плагина.
  */
 		void discharge(PluginType type){
+            std::string names[3] = {"AUDIO", "VIDEO", "IMAGE"};
             for(int i = 0; i < count; i++){
                if(plugins[i].type == type){
                 for (int j = i; j < count - 1; j++){
                     plugins[j] = plugins[j + 1];
                     }
                     count--;
+                    std::cout << "Plugin discharged: " << names[static_cast<int>(type)] << std::endl;
                     break;
-                }    
+                }
             }
+            
         } 
 		
 /**
@@ -281,13 +285,18 @@ class PluginManager{
  * @param type тип искомых плагинов.
  */
         void searchForPluginByType(PluginType type){
-            for(int i = 0; i < count; i++)
+            bool found = false;
+            std::string names[3] = {"AUDIO", "VIDEO", "IMAGE"};
+            for(int i = 0; i < count; i++){
                 if(plugins[i].type == type){
-                    std::cout << "Plugin #" << i << " type: " << static_cast<int>(plugins[i].type) << ", loaded: " << plugins[i].is_loaded << "\n";
-                }else{
+                    found = true;
+                    std::cout << "Plugin #" << i << " type: " << names[static_cast<int>(plugins[i].type)] << ", loaded: " << plugins[i].is_loaded << "\n";
+            }
+        }
+            if(found == false){
                     std::cout << "No plugins of this type\n";
-                }
         } 
+    } 
 		
 /**
  * Подсчитывает количество загруженных плагинов.
@@ -300,7 +309,7 @@ class PluginManager{
                     count_loaded++;
                 }
             }
-            std::cout << "Number of loaded plugins: " << count_loaded;
+            std::cout << "Number of loaded plugins: " << count_loaded << std::endl;
 
         }
 		
@@ -321,8 +330,10 @@ class PluginManager{
 PluginType chooseType(){
     int choice_search_by_type = 0;
     PluginType type;
-    std::cout << "Choose the type: 1 — AUDIO, 2 — VIDEO, 3 — IMAGE" << std::endl;
-    std::cin >> choice_search_by_type;
+    do{
+        std::cout << "Choose the type: 1 - AUDIO, 2 - VIDEO, 3 - IMAGE" << std::endl;
+        std::cin >> choice_search_by_type;
+    }while(choice_search_by_type < 1 || choice_search_by_type > 3);
     switch(choice_search_by_type){
         case 1:
             type = PluginType::AUDIO;
@@ -339,10 +350,11 @@ PluginType chooseType(){
 
 int main(){
     int N;
-    std::cout << "Enter the number of array elements: ";
+    do{
+        std::cout << "Enter the number of array elements: ";
     std::cin >> N;
-	PluginManager plugin_manager(N);
-   
+    }while(N <= 0);
+    PluginManager plugin_manager(N);
     int choice = 0;
     while(choice != -1){
 	std::cout << std::endl;
