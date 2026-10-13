@@ -85,7 +85,6 @@ class Plugin{
  * @return ссылка на текущий объект.
  */
         Plugin& operator=(const Plugin& other){
-            std::cout << "Copy assignment\n";
             if (this == &other) return *this;
             delete plugin_data;
             type = other.type;
@@ -116,7 +115,6 @@ class Plugin{
         Plugin(Plugin&& other) : plugin_data(other.plugin_data), type(other.type), is_loaded(other.is_loaded){
             other.plugin_data = nullptr;
             other.is_loaded = false;
-            std::cout << "Move constructor\n";
         } 
 		
 /**
@@ -127,7 +125,6 @@ class Plugin{
  * @return ссылка на текущий объект.
  */
         Plugin& operator=(Plugin&& other){
-            std::cout << "Move assignment\n";
             if (this == &other) return *this;
             delete plugin_data;
             plugin_data = other.plugin_data;
@@ -190,8 +187,7 @@ class PluginManager{
  * @param other менеджер, из которого копируются данные.
  * @return ссылка на текущий объект.
  */
-        PluginManager& operator=(const PluginManager& other) {
-            std::cout << "Copy assignment\n";
+        PluginManager& operator=(const PluginManager& other){
             if (this == &other) return *this; // защита от самоприсваивания
             delete[] plugins;
             size = other.size;
@@ -209,7 +205,6 @@ class PluginManager{
         PluginManager(PluginManager&& other) : plugins(other.plugins), size(other.size), count(other.count){
             other.plugins = nullptr;
             other.size = 0;
-            std::cout << "Move constructor\n";
         } 
 		
 /**
@@ -219,8 +214,7 @@ class PluginManager{
  * @param other менеджер, из которого перемещаются данные.
  * @return ссылка на текущий объект.
  */
-        PluginManager& operator=(PluginManager&& other) {
-            std::cout << "Move assignment\n";
+        PluginManager& operator=(PluginManager&& other){
             if (this == &other) return *this;
             delete[] plugins;
             plugins = other.plugins;
@@ -255,7 +249,7 @@ class PluginManager{
                     std::cout << "Plugin #" << i << " type: " << names[static_cast<int>(plugins[i].type)] << ", loaded: " << plugins[i].is_loaded << "\n";
                 }
             }else{
-                std::cout << "No plugins loaded";
+                std::cout << "No plugins loaded" << std::endl;
             }
         }			
 		
@@ -265,16 +259,21 @@ class PluginManager{
  * @param type тип выгружаемого плагина.
  */
 		void discharge(PluginType type){
+            bool found = false;
             std::string names[3] = {"AUDIO", "VIDEO", "IMAGE"};
             for(int i = 0; i < count; i++){
                if(plugins[i].type == type){
+                found = true;
                 for (int j = i; j < count - 1; j++){
                     plugins[j] = plugins[j + 1];
                     }
                     count--;
-                    std::cout << "Plugin discharged: " << names[static_cast<int>(type)] << std::endl;
+                    std::cout << "Plugin #" << i << " discharged: " << names[static_cast<int>(type)] << std::endl;
                     break;
                 }
+            }
+            if(found == false){
+                std::cout << "No plugins of this type" << std::endl;
             }
             
         } 
@@ -294,7 +293,7 @@ class PluginManager{
             }
         }
             if(found == false){
-                    std::cout << "No plugins of this type\n";
+                    std::cout << "No plugins of this type" << std::endl;
         } 
     } 
 		
@@ -311,6 +310,11 @@ class PluginManager{
             }
             std::cout << "Number of loaded plugins: " << count_loaded << std::endl;
 
+        }
+        void pluginLoadingAll(){
+            pluginLoading(PluginType::AUDIO);
+            pluginLoading(PluginType::VIDEO);
+            pluginLoading(PluginType::IMAGE);
         }
 		
 /**
@@ -350,12 +354,14 @@ PluginType chooseType(){
 
 int main(){
     int N;
+    bool first_time = true;
+    int choice = 0;
+    int loading_choice = 0;
     do{
         std::cout << "Enter the number of array elements: ";
     std::cin >> N;
     }while(N <= 0);
     PluginManager plugin_manager(N);
-    int choice = 0;
     while(choice != -1){
 	std::cout << std::endl;
     std::cout << "Show menu: \n" << std::endl;
@@ -366,10 +372,21 @@ int main(){
 		<< " '5' - Counting the loaded items\n"
         << " '-1' - Exit \n"
         << std::endl;
-    std::cin >> choice ;
+    std::cin >> choice;
+    if (choice != 1 && first_time){
+        std::cout << "First, press 1 and select the type of plugin you want to download." << std::endl;
+        continue;
+    }
     if(choice == 1){
-        PluginType type = chooseType();
-        plugin_manager.pluginLoading(type);
+        std::cout << "1 - one plugin, 2 - all plugins" << std::endl;
+        std::cin >> loading_choice;
+        if (loading_choice == 1){
+            PluginType type = chooseType();
+            plugin_manager.pluginLoading(type);
+        }else if (loading_choice == 2){
+            plugin_manager.pluginLoadingAll();
+        }
+        first_time = false;
     }else if(choice == 2){
         plugin_manager.demonstrationOfWork();
     }else if(choice == 3){
