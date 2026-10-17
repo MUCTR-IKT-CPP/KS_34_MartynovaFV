@@ -21,11 +21,11 @@ enum class PluginType{
 };
 
 class Plugin{
-	public:
+	private:
 		void* plugin_data;
 		PluginType type;
 		bool is_loaded;
-        
+    public:
 /**
  * Конструктор по умолчанию.
  * Создаёт пустой плагин: данные не выделены, тип AUDIO, не загружен.
@@ -50,6 +50,8 @@ class Plugin{
             case PluginType::IMAGE:
                 plugin_data = new ImagePlugin;
                 break;
+            default:
+                std::cout << "No type" << std::endl;
             }
             is_loaded = true;
         }
@@ -74,6 +76,8 @@ class Plugin{
                 plugin_data = new ImagePlugin;
                 ((ImagePlugin*)plugin_data)->formats_supported = ((ImagePlugin*)other.plugin_data)->formats_supported;
                 break;
+            default:
+                std::cout << "No type" << std::endl;
             }
         } 
 
@@ -83,7 +87,7 @@ class Plugin{
  *
  * @param other плагин, из которого копируются данные.
  * @return ссылка на текущий объект.
- */
+ */ 
         Plugin& operator=(const Plugin& other){
             if (this == &other) return *this;
             delete plugin_data;
@@ -102,6 +106,8 @@ class Plugin{
                 plugin_data = new ImagePlugin;
                 ((ImagePlugin*)plugin_data)->formats_supported = ((ImagePlugin*)other.plugin_data)->formats_supported;
                 break;
+            default:
+                std::cout << "No type" << std::endl;
         }
         return *this;
     }
@@ -133,6 +139,12 @@ class Plugin{
             other.plugin_data = nullptr;
             other.is_loaded = false;
             return *this;
+        }
+        PluginType getType() const {
+            return type;
+        }
+        bool isLoaded() const {
+            return is_loaded;
         }
 		
 /**
@@ -246,7 +258,7 @@ class PluginManager{
             std::string names[3] = {"AUDIO", "VIDEO", "IMAGE"};
             if(count > 0){
                 for(int i = 0; i < count; i++){
-                    std::cout << "Plugin #" << i << " type: " << names[static_cast<int>(plugins[i].type)] << ", loaded: " << plugins[i].is_loaded << "\n";
+                    std::cout << "Plugin #" << i << " type: " << names[static_cast<int>(plugins[i].getType())] << ", loaded: " << plugins[i].isLoaded() << "\n";
                 }
             }else{
                 std::cout << "No plugins loaded" << std::endl;
@@ -262,7 +274,7 @@ class PluginManager{
             bool found = false;
             std::string names[3] = {"AUDIO", "VIDEO", "IMAGE"};
             for(int i = 0; i < count; i++){
-               if(plugins[i].type == type){
+               if(plugins[i].getType() == type){
                 found = true;
                 for (int j = i; j < count - 1; j++){
                     plugins[j] = plugins[j + 1];
@@ -287,9 +299,9 @@ class PluginManager{
             bool found = false;
             std::string names[3] = {"AUDIO", "VIDEO", "IMAGE"};
             for(int i = 0; i < count; i++){
-                if(plugins[i].type == type){
+                if(plugins[i].getType() == type){
                     found = true;
-                    std::cout << "Plugin #" << i << " type: " << names[static_cast<int>(plugins[i].type)] << ", loaded: " << plugins[i].is_loaded << "\n";
+                    std::cout << "Plugin #" << i << " type: " << names[static_cast<int>(plugins[i].getType())] << ", loaded: " << plugins[i].isLoaded() << "\n";
             }
         }
             if(found == false){
@@ -304,7 +316,7 @@ class PluginManager{
         void countingTheLoadedPlugins(){
             int count_loaded = 0;
             for(int i = 0; i < count; i++){
-                if(plugins[i].is_loaded == true){
+                if(plugins[i].isLoaded() == true){
                     count_loaded++;
                 }
             }
@@ -316,6 +328,7 @@ class PluginManager{
             pluginLoading(PluginType::VIDEO);
             pluginLoading(PluginType::IMAGE);
         }
+        
 		
 /**
  * Деструктор.
