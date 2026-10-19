@@ -501,8 +501,7 @@ try{
             break;
         case 8: myLibrary.resourcesPopularityStatistics();
             break;
-        case 9: myLibrary.recommendResources("Bulgakov M.");
-                myLibrary.array[0]->getAuthor();
+        case 9: myLibrary.recommendResources(myLibrary.array[0]->getAuthor());
             break;
         case 10: myLibrary.showActiveReaders();
             break;
