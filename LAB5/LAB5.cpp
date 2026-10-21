@@ -17,14 +17,14 @@ std::string names [COUNT_OF_NAMES_AUTHORS] = {"1984", "Lord of the Rings", "Over
         "Gone with the Wind", "Master and Margarita", "Crime and Punishment", "Dog's Heart", "Three Comrades", 
         "A Hero of Our Time", "The Picture of Dorian Gray", "Robinson Crusoe", "Faust", "The Divine Comedy", "Idiot"};
 std::string last_names[COUNT_OF_NAMES_AUTHORS] = {"Orwell", "Tolkien", "Salinger", "Fitzgerald", "Rowling",
-    "Frank", "de Saint-Exupery", "Bradbury", "Marquez", "Huxley",
-    "Mitchell", "Bulgakov", "Dostoevsky", "Bulgakov", "Remarque",
-    "Lermontov", "Wilde", "Defoe", "Goethe", "Dante", "Dostoevsky"
+                                                "Frank", "de Saint-Exupery", "Bradbury", "Marquez", "Huxley",
+                                                "Mitchell", "Bulgakov", "Dostoevsky", "Bulgakov", "Remarque",
+                                                "Lermontov", "Wilde", "Defoe", "Goethe", "Dante", "Dostoevsky"
 };
 std::string initials[COUNT_OF_NAMES_AUTHORS] = {"G.", "J.R.R.", "J.D.", "F.S.", "J.K.",
-                "A.", "A.", "R.", "G.G.", "A.",
-                "M.", "M.", "F.", "M.", "E.M.",
-                "M.", "O.", "D.", "J.W.", "A.", "F."
+                                                "A.", "A.", "R.", "G.G.", "A.",
+                                                "M.", "M.", "F.", "M.", "E.M.",
+                                                "M.", "O.", "D.", "J.W.", "A.", "F."
 
 };
 
@@ -39,15 +39,15 @@ class LibraryResource{
         std::string name;
         std::string author;
         int year;
-        bool is_available; //доступна ли 
-        int times_issued = 0; //сколько раз книгу брали
-        std::queue<std::string> waiting_queue; //очередь бронирования
+        bool is_available; 
+        int times_issued = 0; 
+        std::queue<std::string> waiting_queue; 
     public:
-        virtual void showInfo() const = 0; //показ инфы
-        virtual bool checkAccess() const = 0; //проверка доступа ресурса
-        virtual int getLoanPeriod() const = 0; //период доступа ресурса
-        virtual std::string getResourceTypeName() const = 0; // книга, журнал, эл.ресурс
-        friend std::ostream& operator<<(std::ostream& os, const LibraryResource& res); //перегрузка оператора
+        virtual void showInfo() const = 0; 
+        virtual bool checkAccess() const = 0; 
+        virtual int getLoanPeriod() const = 0; 
+        virtual std::string getResourceTypeName() const = 0; 
+        friend std::ostream& operator<<(std::ostream& os, const LibraryResource& res); 
 
         LibraryResource(std::string name, std::string author, int year){
             this->name = name;
@@ -88,6 +88,7 @@ class LibraryResource{
     void showQueue(){
         std::cout << "People in queue: " << waiting_queue.size() << std::endl;
     }
+
 
 
     virtual ~LibraryResource(){};
@@ -222,6 +223,10 @@ class Library{
             count++;
         }
     }
+
+    std::string getAuthorByIndex(int index){
+        return array[index]->getAuthor();
+}
 
     LibraryResource* generateRandom(ResourceType type){
         std::string isbn_random;
@@ -443,17 +448,26 @@ class Library{
 
 int main(){
 int N;
+Library* myLibrary = nullptr;
 int choice = 0;
 std::string reader_name;
 int book_index;
 int queue_index;
-try{
+int rec_index;
+try {
     srand(time(0));
-    std::cout << "Whrite number of resources: ";
-    std::cin >> N;
-    Library myLibrary(N);
-    myLibrary.fillLibrary(N);
-    myLibrary.sortByYear();
+    while (true) {
+        std::cout << "Enter N (20-50): ";
+        std::cin >> N;
+        try {
+            myLibrary = new Library(N);
+            break; 
+        } catch (const std::exception& e) {
+            std::cout << "Error: " << e.what() << ". Try again." << std::endl;
+        }
+    }
+    myLibrary->fillLibrary(N);
+    myLibrary->sortByYear();
     while(choice != -1){
 	std::cout << "\n=========================\n";
     std::cout << "Show menu: \n" << std::endl;
@@ -473,44 +487,77 @@ try{
         std::cout << std::endl;
     std::cin >> choice;
     switch(choice){
-        case 1: myLibrary.searchByAuthor("Rowling J.K.");
+        case 1: {
+            std::string author_to_find;
+            std::cout << "Enter author name (e.g., Rowling J.K.): ";
+            std::cin.ignore(); 
+            std::getline(std::cin, author_to_find); 
+            myLibrary->searchByAuthor(author_to_find);
             break;
-        case 2: myLibrary.searchByName("the");
+        }
+        case 2: {
+            std::string name_to_find;
+            std::cout << "Enter title part: ";
+            std::cin.ignore();
+            std::getline(std::cin, name_to_find);
+            myLibrary->searchByName(name_to_find);
             break;
-        case 3: myLibrary.searchByPublicationYear(2000, 2015);
+        }
+        case 3: {
+            int min_y, max_y;
+            std::cout << "Enter min year: ";
+            std::cin >> min_y;
+            std::cout << "Enter max year: ";
+            std::cin >> max_y;
+            myLibrary->searchByPublicationYear(min_y, max_y);
             break;
-        case 4: myLibrary.searchByResourceType("ElectronicResource");
+        }   
+        case 4:{
+            std::string type_to_find; 
+            std::cout << "Enter type (Book, Magazine, ElectronicResource): ";
+            std::cin >> type_to_find;
+            myLibrary->searchByResourceType(type_to_find);
             break;
+        }
         case 5: std::cout << "Enter the reader's name: ";
                 std::cin >> reader_name;
                 std::cout << "Enter the book number: ";
                 std::cin >> book_index;
-                if(book_index < 0 || book_index >= myLibrary.count){
-                    throw std::invalid_argument("Invalid book number");
-                }
-                myLibrary.issueResource(book_index, reader_name);
+                if(book_index < 0 || book_index >= myLibrary->count){
+                    std::cout << "Error: Invalid book number! Please try again." << std::endl;
+                break;
+            }
+                myLibrary->issueResource(book_index, reader_name);
             break;
-        case 6: std::cout << "Issued resources: " << myLibrary.accountingIssuedResources() << std::endl;
+        case 6: std::cout << "Issued resources: " << myLibrary->accountingIssuedResources() << std::endl;
             break;
-        case 7: std::cout << "Enter the book number to view its queue: " << std::endl;
+        case 7: std::cout << "Enter the book number to view its queue: ";
                 std::cin >> queue_index;
-                if(queue_index < 0 || queue_index >= myLibrary.count){
-                    throw std::invalid_argument("Invalid queue number");
+                if(queue_index < 0 || queue_index >= myLibrary->count){
+                    std::cout << "Error: Invalid book number! Please try again." << std::endl;
+            break;
                 }
-                myLibrary.showQueueForResource(queue_index);
+                myLibrary->showQueueForResource(queue_index);
             break;
-        case 8: myLibrary.resourcesPopularityStatistics();
+        case 8: myLibrary->resourcesPopularityStatistics();
             break;
-        case 9: myLibrary.recommendResources(myLibrary.array[0]->getAuthor());
+        case 9: std::cout << "Enter the book number you want recommendations for: " << std::endl;
+                std::cin >> rec_index;
+                if(rec_index < 0 || rec_index >= myLibrary->count){
+                    std::cout << "Error: Invalid book number! Please try again." << std::endl;
             break;
-        case 10: myLibrary.showActiveReaders();
+                }
+                myLibrary->recommendResources(myLibrary->getAuthorByIndex(rec_index));
             break;
-        case 11: myLibrary.showAll();
+        case 10: myLibrary->showActiveReaders();
+            break;
+        case 11: myLibrary->showAll();
             break;
             }
         }
     }
-catch (const std::exception& e){ 
+catch(const std::exception& e){ 
     std::cout << e.what() << "\n"; 
     }
+    delete myLibrary;
 }
